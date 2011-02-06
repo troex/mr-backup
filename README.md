@@ -17,4 +17,4 @@ Usage
 * Just clone this script to the server directory where you want to deploy backup
 * Rename _mr-backup.sh.conf.example_ to _mr-backup.sh.conf_ and set your backup root directory
 * Check _conf.d/example.org.conf_ for sample host config
-* Run the script to backup server `./mr-backup.sh example.org`
+* Run the script to backup target host `./mr-backup.sh example.org`
