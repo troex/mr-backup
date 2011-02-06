@@ -1,10 +1,21 @@
 #!/bin/sh
 
 # mr-backup.sh
-# author Troex Nevelin <troex@fury.scancode.ru>
+# homepage:  https://github.com/troex/mr-backup
+# author:    Troex Nevelin <troex@fury.scancode.ru>
 
 BROOT="" # backup root directory
-# include global config or exit
+
+# usage help
+case $1 in
+""|-h|--help)
+	echo "Usage: mr-backup.sh [HOST]"
+	echo "Backup unix server using rsync+ssh, more info https://github.com/troex/mr-backup"
+	exit 0
+	;;
+esac
+
+# include global config
 GCONF="${0}.conf"
 if [ -f ${GCONF} ]
 then
@@ -15,15 +26,15 @@ else
 fi
 
 # default options, do not change them here, use global/host config
-POOL="${BROOT}/pool/"         # pool where current snapshots will be located
-ARCHIVE="${BROOT}/archive/"   # backup history will go here
-CONF="${BROOT}/conf.d/"       # config directory
+POOL="${BROOT}/pool/"        # pool where current snapshots will be located
+ARCHIVE="${BROOT}/archive/"  # backup history will go here
+CONF="${BROOT}/conf.d/"      # config directory
 HOST="$1"                    # hostname to backup
 SSH="ssh"                    # ssh and it's options, eg. "ssh -p 2022"
 REMOTE="root@${HOST}"        # remote source host and user for rsync
 RBPATHS=""                   # space separated paths on remote server which will be backuped
 OPTS="--archive --backup --compress --delete-after --delete-excluded --stats --verbose --numeric-ids" # default rsync opts
-DATE=`date +%Y-%m-%d`        # 
+DATE=`date +%Y-%m-%d`        # used in archive path
 
 if [ -z $BROOT ]
 then
@@ -43,13 +54,7 @@ then
 	exit 1
 fi
 
-if [ `whoami` != "root" ];
-then
-	echo "Error: this script must be run as 'root'"
-	exit 1
-fi
-
-# include local config if exists
+# include host config
 LCONF="${CONF}${HOST}.conf"
 if [ -f ${LCONF} ]
 then
@@ -70,6 +75,12 @@ EXCLUDE="${CONF}${HOST}.exclude"
 if [ -f "${EXCLUDE}" ]
 then
 	OPTS="$OPTS --exclude-from=${EXCLUDE}"
+fi
+
+if [ `whoami` != "root" ];
+then
+	echo "Warning: this script must be run as 'root' to save file owners"
+	#exit 1
 fi
 
 for RBP in $RBPATHS

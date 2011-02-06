@@ -1,0 +1,14 @@
+## global configuration file
+## rename this file to 'mr-backup.sh.conf'
+BROOT="" # backup root directory, the only required paramater
+
+## default global parameters, you can also change them in host config (check conf.d/ directory)
+#POOL="${BROOT}/pool/"        # pool where current snapshots will be located
+#ARCHIVE="${BROOT}/archive/"  # backup history will go here
+#CONF="${BROOT}/conf.d/"      # config directory
+#HOST="$1"                    # hostname to backup
+#SSH="ssh"                    # ssh and it's options, eg. "ssh -p 2022"
+#REMOTE="root@${HOST}"        # remote source host and user for rsync
+#RBPATHS=""                   # space separated paths on remote server which will be backuped
+#OPTS="--archive --backup --compress --delete-after --delete-excluded --stats --verbose --numeric-ids" # default rsync opts
+#DATE=`date +%Y-%m-%d`        # used in archive path
