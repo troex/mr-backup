@@ -1,0 +1,2 @@
+## set exclude patterns, this file is passed to rsync --exclude-from option
+#*.log

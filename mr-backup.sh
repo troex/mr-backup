@@ -64,7 +64,7 @@ else
 	exit 1
 fi
 
-if [ -z $RBPATHS ]
+if [ -z "$RBPATHS" ]
 then
 	echo "Error: remote backup paths are not set"
 	exit 1
