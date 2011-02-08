@@ -100,12 +100,12 @@ do
 		mkdir -p ${BBPATH}
 	fi
 	# add backup dir
-	OPTS="${OPTS} --backup-dir=${BBPATH}"
+	BPOPTS="--backup-dir=${BBPATH}"
 
 	echo "Started ${HOST} backup at `date`"
-	echo \# rsync ${OPTS} -e \"${SSH}\" ${FROM} ${TO}
+	echo \# rsync ${OPTS} ${BPOPTS} -e \"${SSH}\" ${FROM} ${TO}
 
-	rsync ${OPTS} -e "${SSH}" ${FROM} ${TO}
+	rsync ${OPTS} ${BPOPTS} -e "${SSH}" ${FROM} ${TO}
 
 	echo "Finished ${HOST} backup at `date`"
 	echo
