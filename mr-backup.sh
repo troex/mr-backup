@@ -33,10 +33,14 @@ HOST="$1"                    # hostname to backup
 SSH="ssh"                    # ssh and it's options, eg. "ssh -p 2022"
 REMOTE="root@${HOST}"        # remote source host and user for rsync
 RBPATHS=""                   # space separated paths on remote server which will be backuped
-OPTS="--archive --backup --compress --delete-after --delete-excluded --stats --verbose --numeric-ids" # default rsync opts
+OPTS="--archive --compress --delete-after --delete-excluded --stats --verbose --numeric-ids" # default rsync opts
 DATE=`date +%Y-%m-%d`        # used in archive path
+EXIT_ON_ERROR="yes"          # whatever to terminate script if we got an error from rsync
 
-if [ -z $BROOT ]
+# include global config once more to overwrite default values if any
+. ${GCONF}
+
+if [ -z "$BROOT" ]
 then
 	echo "Error: backup root directory is not set"
 	exit 1
@@ -48,7 +52,7 @@ then
 	exit 1
 fi
 
-if [ -z $HOST ]
+if [ -z "$HOST" ]
 then
 	echo "Error: no host specified for backup"
 	exit 1
@@ -94,22 +98,34 @@ do
 		mkdir -p $TO
 	fi
 
-	BBPATH="${ARCHIVE}${HOST}/${DATE}${RBP}"
-	if [ ! -d ${BBPATH} ]
+	# backup old data if ARCHIVE is set
+	if [ -n "${ARCHIVE}" ]
 	then
-		mkdir -p ${BBPATH}
+		BBPATH="${ARCHIVE}${HOST}/${DATE}${RBP}"
+		if [ ! -d ${BBPATH} ]
+		then
+			mkdir -p ${BBPATH}
+		fi
+		BPOPTS="--backup --backup-dir=${BBPATH}"
 	fi
-	# add backup dir
-	BPOPTS="--backup-dir=${BBPATH}"
 
 	echo "Started ${HOST} backup at `date`"
 	echo \# rsync ${OPTS} ${BPOPTS} -e \"${SSH}\" ${FROM} ${TO}
 
 	rsync ${OPTS} ${BPOPTS} -e "${SSH}" ${FROM} ${TO}
+	RET=$?
 
 	echo "Finished ${HOST} backup at `date`"
 	echo
 
+	if [ ${RET} -gt 0 ]
+	then
+		if [ ${EXIT_ON_ERROR} == "yes" ]
+		then
+			echo "Exit due to error code from rsync: ${RET}"
+			exit ${RET}
+		fi
+	fi
 done
 
 exit 0

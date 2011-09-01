@@ -12,3 +12,4 @@ BROOT="" # backup root directory, the only required paramater
 #RBPATHS=""                   # space separated paths on remote server which will be backuped
 #OPTS="--archive --backup --compress --delete-after --delete-excluded --stats --verbose --numeric-ids" # default rsync opts
 #DATE=`date +%Y-%m-%d`        # used in archive path
+#EXIT_ON_ERROR="yes"          # whatever to terminate script if we got an error from rsync
